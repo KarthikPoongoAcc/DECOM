@@ -1,24 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//import React , { useState } from 'react';
 
+import './App.css';
+import Topheader from './components/Topheader';
+// import Chat from './components/Chat';
+import LeftNav from './components/LeftNav';
+import Summarization from './components/Summarization';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Topheader />
+      <div>
+        <LeftNav/>
+        <Summarization />
+{/* //        <Chat/> */}
+      </div>
+     
     </div>
   );
 }
