@@ -9,7 +9,7 @@ const Summarization = (props: Props) => {
   return (
     <div>
          <embed  width="800px" height="2100px" /> 
-        <iframe width={1000} height={500} src="https://docs.google.com/spreadsheets/d/1NXxpCGF9WRw7qtpE2tQtkguVu5yMPQImouGnibyQFl0/edit?usp=sharing"></iframe>
+        {/* <iframe width={1000} height={500} src="https://docs.google.com/spreadsheets/d/1NXxpCGF9WRw7qtpE2tQtkguVu5yMPQImouGnibyQFl0/edit?usp=sharing"></iframe> */}
         </div>
   )
 }
