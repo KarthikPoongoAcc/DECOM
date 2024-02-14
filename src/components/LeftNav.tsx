@@ -4,7 +4,7 @@ type Props = {}
 
 const LeftNav = (props: Props) => {
   return (
-    <Nav fill variant="tabs" defaultActiveKey="/home">
+    <Nav fill variant="tabs" defaultActiveKey="/home" className='scale-up-ver-center' >
     <Nav.Item>
       <Nav.Link eventKey="link-3">Summarization</Nav.Link>
     </Nav.Item>

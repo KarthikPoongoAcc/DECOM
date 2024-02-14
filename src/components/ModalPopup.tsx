@@ -45,12 +45,19 @@ const ModalPopup = (props: Props) => {
   // 👇 files is not an array, but it's iterable, spread to get an array of files
   const files = fileList ? [...fileList] : [];
 
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  function toggle() {
+    setIsOpen((isOpen) => !isOpen);
+  }
+
   return (
     <>
          <div className="nav-bar">
-   <LeftNav/>
+    {isOpen && <LeftNav/>}
     <div className='file-bar'>
-    
+    <button onClick={toggle} className='scale-up-ver-center'>Toggle show</button>
       <div className='files'>
         <div className='file-bar--icons'>
          <img src={xls} className='file-bar--icon' title='FileName.xls'/>
