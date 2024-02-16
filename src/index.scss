@@ -6,6 +6,11 @@
   src: url("./assets/fonts/Catamaran-Regular.ttf");
 }
 
+@font-face {
+  font-family: 'Catamaran-bold';
+  src: url("./assets/fonts/Catamaran-ExtraBold.ttf");
+}
+
 body {
   margin: 0;
   font-family: 'Catamaran-regular', 'Helvetica Neue',
@@ -35,4 +40,8 @@ code {
 
 ::-webkit-scrollbar-corner {
   background: #fff;
+}
+
+.primary-color{
+  color: #6c03a9;
 }

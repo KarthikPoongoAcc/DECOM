@@ -26,15 +26,28 @@ const ModalPopup = (props: Props) => {
     }
 
     // 👇 Create new FormData object and append files
+    // const data = new FormData();
+    // files.forEach((file, i) => {
+    //   data.append(`file-${i}`, file, file.name);
+    // });
+
     const data = new FormData();
     files.forEach((file, i) => {
-      data.append(`file-${i}`, file, file.name);
-    });
+          data.append(`file-${i}`, file, file.name);
+        });
     console.time('Loading time')
     // 👇 Uploading the files using the fetch API to the server
-    fetch('https://httpbin.org/post', {
-      method: 'POST',
+    fetch('https://webapp-decom-demo.azurewebsites.net/upload', {
+     
+      method: 'PUT',
       body: data,
+      headers: {
+        'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',                 
+        'Accept': '*/*',
+       'host': "http://localhost:3000/",
+        "Access-Control-Origin": "*"
+      }
+      
     })
       .then((res) => res.json())
       .then((data) =>{ console.log(data);  console.timeEnd('Loading time')})
@@ -76,7 +89,7 @@ const ModalPopup = (props: Props) => {
         </div>
     </div>
 
-      <Modal show={show} onHide={handleClose} centered>
+      <Modal show={show} onHide={handleShow} centered>
         <Modal.Header closeButton>
           <Modal.Title>Modal heading</Modal.Title>
         </Modal.Header>

@@ -1,10 +1,12 @@
 //import React , { useState } from 'react';
 
-import './App.css';
+import './App.scss';
 import Topheader from './components/Topheader';
 // import Chat from './components/Chat';
 import LeftNav from './components/LeftNav';
 import ParticlesBg from 'particles-bg';
+import Welcome from './components/Welcome';
+
 //import Summarization from './components/Summarization';
 
 function App() {
@@ -12,11 +14,17 @@ function App() {
   return (
     <div className="App">
       <Topheader />
-      <div>
+      <main className='d-flex'>
+        <div className='left-nav'>
+          <LeftNav/>
+        </div>
+        <div className='main-content'>
+          <Welcome />
       <ParticlesBg type="cobweb"/>
+      </div>
         {/* <Summarization /> */}
        {/* <Chat/> */}
-      </div>
+      </main>
      
     </div>
   );

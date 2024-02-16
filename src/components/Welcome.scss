@@ -1,0 +1,23 @@
+
+h1{
+    span{
+        font-family: 'Catamaran-bold';
+    }
+}
+
+.welcome-text{
+    width: 75%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: center;
+    height: 100%;
+    padding-bottom: 50px;
+    
+}
+
+.linkWrap {
+    display: flex;
+    justify-content: end;
+}

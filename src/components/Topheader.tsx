@@ -11,10 +11,13 @@ const Topheader = (props: Props) => {
     <header>
       <div className='d-flex top-header'>
           <img src={logo} className="top-header--logo" alt="logo" />
-          
+          <div className="logo-text primary-color">
+            Gen AI - DECOM
+          </div>
+         
       </div>
     </header>
-   <Modal/>
+   {/* <Modal/> */}
     </div>
     
   )
