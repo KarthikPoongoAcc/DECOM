@@ -1,3 +1,5 @@
+
+
 @import '~bootstrap/scss/bootstrap';
 @import './animation.scss';
 
@@ -10,11 +12,14 @@
   font-family: 'Catamaran-bold';
   src: url("./assets/fonts/Catamaran-ExtraBold.ttf");
 }
-
+html{
+  font-size: 16px;
+}
 body {
   margin: 0;
   font-family: 'Catamaran-regular', 'Helvetica Neue',
     sans-serif;
+    font-size: 1rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: radial-gradient(150% 100% at 50% 50%, #c4d2ff 12%, white 100%);

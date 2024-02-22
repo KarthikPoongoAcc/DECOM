@@ -44,13 +44,12 @@ const ModalPopup = (props: Props) => {
       headers: {
         'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent>',                 
         'Accept': '*/*',
-       'host': "http://localhost:3000/",
         "Access-Control-Origin": "*"
       }
       
     })
       .then((res) => res.json())
-      .then((data) =>{ console.log(data);  console.timeEnd('Loading time')})
+      .then((data) =>{ console.log(data);})
       .catch((err) => console.error(err));
       
   };
