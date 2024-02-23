@@ -12,6 +12,7 @@ import Summarization from './components/Summarization';
 import Enhance from './components/Enhance';
 import Recommend from './components/Recommend';
 import DocGeneration from './components/DocGeneration';
+import TopSettings from './components/TopSettings';
 
 // import FileUpload from './components/FileUpload';
 
@@ -21,13 +22,13 @@ function App() {
  
   return (
     <div className="App">
-      <Topheader />
+      
       <main className='d-flex'>
         <div className='left-nav'>
           <LeftNav/>
         </div>
         <div className='main-content'>
-        
+        <TopSettings />
       <Routes>
         <Route path="/" element={<Welcome />} />
          

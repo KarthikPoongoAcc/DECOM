@@ -12,6 +12,14 @@
   font-family: 'Catamaran-bold';
   src: url("./assets/fonts/Catamaran-ExtraBold.ttf");
 }
+@font-face {
+  font-family: 'Dosis-Regular';
+  src: url("./assets/fonts/Dosis-Regular.ttf");
+}
+@font-face {
+  font-family: 'Dosis-Light';
+  src: url("./assets/fonts/Dosis-Light.ttf");
+}
 html{
   font-size: 16px;
 }
@@ -20,13 +28,19 @@ body {
   font-family: 'Catamaran-regular', 'Helvetica Neue',
     sans-serif;
     font-size: 1rem;
+    line-height: 1.5rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: radial-gradient(150% 100% at 50% 50%, #c4d2ff 12%, white 100%);
+  // background: radial-gradient(150% 100% at 50% 50%, #c4d2ff 12%, white 100%);
+  background: #DEDEDE;
   background-blend-mode: normal;
   height: 100vh;
+  color: #555;
 }
-
+h1, h2, h3{
+  font-family: "Dosis-Regular", 'Helvetica Neue',
+  sans-serif;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

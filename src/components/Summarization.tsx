@@ -15,18 +15,22 @@ const Summarization = (props: Props) => {
   const [selected, setSelected] = useState([]);
   const [fileName, setFilename] = useState('');
   const [blob, setblob] = useState();
+  const [spinner, setSpinner] = useState(false);   
 
   useEffect(() => {
+    setSpinner(true);
     fetch("https://webapp-decom-demo.azurewebsites.net/available-cmdbs",{
       method: 'get'
     })
       .then((response) => response.json())
-      .then((data) =>
+      .then((data) =>{
       setSelected(
           data.list_of_cmdbs.map((x:any, i:any) => {
             return { key: i, text: x, value: x };
           })
-        )
+        );
+        setSpinner(false);
+      }
       );
   }, []);
 
@@ -37,28 +41,47 @@ var download = require('js-file-download');
 const SelectCMDb= (e:any) =>{
   console.log(e.target.textContent)
   setFilename(e.target.textContent);
- setdownloadfile(true);
-  return(e.target.textContent)
+  setdownloadfile(false);
+ return(e.target.textContent)
 }
 
 const Downloadsummary = () =>{
   const formData = new FormData();
   formData.append("cmdb_folder", fileName);
+  setSpinner(true);
  fetch('https://webapp-decom-demo.azurewebsites.net/summarize', {
    method: 'post',
    body: formData,
    
  }).then(function(resp) {
   // const filename =  resp.headers.get('Content-Disposition').split('filename=')[1];
- 
+  setSpinner(false);
+  console.log(resp);
+  setdownloadfile(true);
+   return resp.blob();
+ })
+}
+
+const Downloadsummaryfile = () =>{
+  const formData = new FormData();
+  formData.append("cmdb_folder", fileName);
+  setSpinner(true);
+ fetch('https://webapp-decom-demo.azurewebsites.net/download', {
+   method: 'Get',
+   body: formData,
+   
+ }).then(function(resp) {
+  // const filename =  resp.headers.get('Content-Disposition').split('filename=')[1];
+  setSpinner(false);
   console.log(resp);
    return resp.blob();
  }).then(function(blob) {
    console.log(blob)
-   
+   setSpinner(false);
    return download(blob, "Processed_" + fileName + ".xlsx");
  });
 }
+
 const donutData = [
  {name: "<5", value: 80},
  {name: "5-9", value: 20},
@@ -66,7 +89,7 @@ const donutData = [
 
 function Datalist(){
   return(
-    <><div className="d-flex selector">
+   <div className="d-flex selector">
 
 {/* {selected && ( */}
 <Dropdown
@@ -74,14 +97,15 @@ placeholder="Select CMDB"
 search
 selection
 options={selected}
-onChange ={SelectCMDb}
+onChange ={ SelectCMDb}
+
 /> 
 {/* )} */}
   <div>
-  {/* <Button type="submit" onClick={StartSummrise}>Summarize</Button> */}
+  <Button type="submit" onClick={Downloadsummary}>Summarize</Button>
   </div>
   
-</div></>
+</div>
   )
 }
 function Download(){
@@ -92,7 +116,7 @@ function Download(){
   <DonutChart data={donutData}  /> 
   </div>
   <div className="text-end">
-  <Button variant="primary" onClick={Downloadsummary} >
+  <Button variant="primary" onClick={Downloadsummaryfile} >
      <img src={uploadimg} width={25} alt="upload" className="btn-icon"/>Download
     </Button>
   </div></>)
@@ -109,11 +133,15 @@ function Download(){
           </ul>
           </div>
           <Datalist/>
-          { downloadfile && <Download /> }
+          { (downloadfile && fileName) && <Download /> }
         
        
       </div>
-    
+      {spinner && (
+        <div className="spinner">
+          <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        )}
         {/* <iframe width={1000} height={500} src="https://docs.google.com/spreadsheets/d/1NXxpCGF9WRw7qtpE2tQtkguVu5yMPQImouGnibyQFl0/edit?usp=sharing"></iframe> */}
     </div>
   )

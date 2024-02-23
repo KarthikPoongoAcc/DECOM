@@ -82,7 +82,10 @@ const FileUpload = (props: any) => {
     setShowmultipleupload(false);
       console.log((e.target.accept).split(","));
       setOFileList(e.target.files);
-      
+      console.log(e.target.files);
+      // for (let i = 0; i < e.target.files?.length; i++) {
+        
+      // }
      data.push(e.target.files);
       if(e.target.files){
         setShowResults(true);
