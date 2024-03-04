@@ -41,6 +41,10 @@ h1, h2, h3{
   font-family: "Dosis-Regular", 'Helvetica Neue',
   sans-serif;
 }
+h2{
+  font-size: 2rem;
+  font-weight: 800;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -63,4 +67,8 @@ code {
 
 .primary-color{
   color: #6c03a9;
+}
+
+:disabled{
+  cursor: not-allowed;
 }

@@ -1,76 +1,86 @@
-import { CompactTable } from '@table-library/react-table-library/compact';
 import { useTree } from '@table-library/react-table-library/tree';
 import { useState } from 'react';
 import { useSort } from "@table-library/react-table-library/sort";
+import downloadprocessed from "../assets/images/icons/file-download-alt.svg";
+import downloadraw from "../assets/images/icons/download-file.svg";
+import {
+  Table,
+  Header,
+  HeaderRow,
+  Body,
+  Row,
+  HeaderCell,
+  Cell,
+} from "@table-library/react-table-library/table";
 
 import "./FileStatus.scss";
 const list = [
     {
       id: "1",
-      name: "VSCode",
+      CMDBfileName: "CMDB_NICApplication",
       deadline: new Date(2020, 1, 17),
-      type: "SETUP",
+      type: "In-Progress",
       isComplete: true,
     },
     {
       id: "2",
-      name: "JavaScript",
+      CMDBfileName: "CMDB_TechApp",
       deadline: new Date(2020, 2, 28),
-      type: "LEARN",
+      type: "Completed",
       isComplete: true,
       nodes: [
         {
           id: "2.1",
-          name: "Data Types",
+          CMDBfileName: "Data Types",
           deadline: new Date(2020, 2, 28),
-          type: "LEARN",
-          isComplete: true,
+         
+          isComplete: false,
         },
         {
           id: "2.2",
-          name: "Objects",
+          CMDBfileName: "Objects",
           deadline: new Date(2020, 2, 28),
-          type: "LEARN",
-          isComplete: true,
+        
+          isComplete: false,
         },
         {
           id: "2.3",
-          name: "Code Style",
+          CMDBfileName: "Code Style",
           deadline: new Date(2020, 2, 28),
-          type: "LEARN",
-          isComplete: true,
+          
+          isComplete: false,
         },
       ],
     },
     {
       id: "3",
-      name: "React",
+      CMDBfileName: "CMDB_TestApp",
       deadline: new Date(2020, 3, 8),
-      type: "LEARN",
-      isComplete: false,
+      type: "Completed",
+      isComplete: true,
       nodes: [
         {
           id: "3.1",
-          name: "Components",
+          CMDBfileName: "Components",
           deadline: new Date(2020, 3, 8),
-          type: "LEARN",
-          isComplete: true,
+         
+          isComplete: false,
         },
         {
           id: "3.2",
-          name: "JSX",
+          CMDBfileName: "JSX",
           deadline: new Date(2020, 3, 8),
-          type: "LEARN",
-          isComplete: true,
+          
+          isComplete: false,
         },
       ],
     },
   ];
 
 const COLUMNS = [
-  { label: 'Task', renderCell: (item:any) => item.name },
+  { label: 'CMDB File Name', renderCell: (item:any) => item.CMDBfileName },
   {
-    label: 'Deadline',
+    label: 'Uploaded Date',
     renderCell: (item:any) =>
       item.deadline.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -99,9 +109,10 @@ const FileStatus = (props: Props) => {
   
     const data = {
       nodes: list.filter((item) =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.CMDBfileName.toLowerCase().includes(search.toLowerCase())
       ),
     };
+
     const tree = useTree(data, {
         onChange: onTreeChange,
       },
@@ -123,7 +134,7 @@ const FileStatus = (props: Props) => {
       }, {
         sortFns: {
           TASK: (array:any[]) =>
-            array.sort((a, b) => a.name.localeCompare(b.name)),
+            array.sort((a, b) => a.CMDBfileName.localeCompare(b.CMDBfileName)),
           DEADLINE: (array:any[]) =>
             array.sort((a, b) => a.deadline - b.deadline),
           TYPE: (array:any[]) =>
@@ -145,7 +156,43 @@ const FileStatus = (props: Props) => {
         <input id="search" type="text" value={search} onChange={handleSearch} placeholder='Search' />
       </label>
       <br /> 
-            <CompactTable columns={COLUMNS} data={data} tree={tree} sort={sort}/>
+            {/* <CompactTable columns={COLUMNS} data={data} tree={tree} sort={sort}/> */}
+            <Table data={data} tree={tree} sort={sort}>
+            {(tableList:any) => (
+              <>
+              <Header>
+                <HeaderRow>
+                  <HeaderCell>CMDB Name</HeaderCell>
+                  <HeaderCell>Uploaded Date</HeaderCell>
+                  <HeaderCell className="text-center">Summarization Status</HeaderCell>
+                  <HeaderCell className="text-center">Download Raw Files</HeaderCell>
+                  <HeaderCell className="text-center">Download Processed Files</HeaderCell>
+                </HeaderRow>
+              </Header>
+              <Body>
+                   {tableList.map((list:any) => (
+                <Row key={list.id} item={list}>
+                  <Cell>{list.CMDBfileName}</Cell>
+                  <Cell>
+                    {list.deadline.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })}
+                  </Cell>
+                  <Cell className="text-center">
+                    <span className={list.type == "In-Progress" ? "orange" :(list.type == "Completed" ? "green" : "red") } >{list.type}</span>
+                  </Cell>
+                  <Cell className="text-center"><a href=""><img src={downloadraw} width={24} /></a></Cell>
+                  <Cell className={ list.type =="In-Progress" ? "text-center disabled" : "text-center" }><a href="" className={list.isComplete == false ?"d-none" : "" } ><img src={downloadprocessed} width={24} /></a></Cell>
+                </Row>
+              ))}
+              </Body>
+              </>
+              
+            )}
+          </Table>
+
             </div>
         </div>
     </div>
