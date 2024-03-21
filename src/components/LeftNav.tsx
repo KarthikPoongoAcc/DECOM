@@ -29,7 +29,7 @@ const LeftNav = (props: Props) => {
      </div>
       <Nav fill variant="tabs" className='scale-up-ver-center' defaultActiveKey={window.location.pathname}>
         <Nav.Item>
-        <Nav.Link eventKey="/" as={Link} to="/"><img src={dashboard} width={30} alt="Status" />Status</Nav.Link>
+        <Nav.Link eventKey="/" as={Link} to="/"><img src={dashboard} width={30} alt="Status" />Status PRA</Nav.Link>
       </Nav.Item>
       <Nav.Item  >
         <Nav.Link eventKey="/summarization" as={Link} to="/summarization"><img src={summarize} width={30} alt="Summarize" />Summarize</Nav.Link>
