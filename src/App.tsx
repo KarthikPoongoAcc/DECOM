@@ -9,7 +9,7 @@ import Welcome from './components/Welcome';
 
 import { Routes, Route } from "react-router-dom";
 import Summarization from './components/Summarization';
-import Enhance from './components/Enhance';
+import Enrich from './components/Enrich';
 import Recommend from './components/Recommend';
 import DocGeneration from './components/DocGeneration';
 import TopSettings from './components/TopSettings';
@@ -33,8 +33,8 @@ function App() {
         <Route path="/" element={<Welcome />} />
          
           <Route path="summarization" element={<Summarization />} />
-          <Route path="enhance" element={<Enhance />} />
-          <Route path="recomment" element={<Recommend />} />
+          <Route path="enrich" element={<Enrich />} />
+          <Route path="recommend" element={<Recommend />} />
           <Route path="docgeneration" element={<DocGeneration />} />
        
       </Routes>

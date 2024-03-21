@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from "react-chartjs-2";
+import React, { useEffect, useState } from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import downloadimg from "../assets/images/icons/download-arrow-icon.svg";
 import {
   Table,
@@ -26,10 +18,9 @@ import summarize from "../assets/images/additem.svg";
 import { useTree, CellTree } from "@table-library/react-table-library/tree";
 import downloadprocessed from "../assets/images/icons/file-download-alt.svg";
 
+type Props = {};
 
-type Props = {}
-
-const Recommend = (props: Props) => {
+const Enrich = (props: Props) => {
   const [spinner, setSpinner] = useState(false);
   const [selectedfile, setSelectedfile] = useState("");
   const [processfiles, setProcessfiles] = useState(false);
@@ -38,9 +29,9 @@ const Recommend = (props: Props) => {
   const [uploadlist, setUploadedList] = useState<any[]>([]);
   const [seleteduploadlist, setSeltedUploadedList] = useState({ nodes: [] });
   const [selectedid, setSelectedID] = useState("");
-  const [recommeddata, setRecommedData] = useState<any | null>([]);
+  const [enrichdata, setEnrichddata] = useState<any | null>([]);
   const [showprocess, setShowProcess] = useState(false);
-  const [recommendstatus, setRecommendstatus] = useState<any | null>('');
+  const [enrichedstatus, setEnrichedstatus] = useState<any | null>('');
   
   useEffect(() => {
     setSpinner(true);
@@ -57,7 +48,7 @@ const Recommend = (props: Props) => {
         let completeddata: any = [];
         setUploadedList(data);
         for (let i = 0; i < data.length; i++) {
-          if (data[i].enrich_status === "Completed") {
+          if (data[i].summary_status === "Completed") {
             completeddata.push(data[i]);
           }
         }
@@ -86,7 +77,7 @@ const Recommend = (props: Props) => {
         console.log(file.cmdb_file_name);
         setSeltedUploadedList(file);
         setSelectedID(file.id);
-        setRecommendstatus(file.apr_status);
+        setEnrichedstatus(file.enrich_status);
       }
     });
 
@@ -120,7 +111,7 @@ const Recommend = (props: Props) => {
       // formData.append("cmdb_folder", selectedfile);
       setSpinner(true);
       fetch(
-        "https://webapp-decom-demo.azurewebsites.net/apr?id=" + selectedid,
+        "https://webapp-decom-demo.azurewebsites.net/enrich?id=" + selectedid,
         {
           method: "get",
         }
@@ -130,7 +121,7 @@ const Recommend = (props: Props) => {
           console.log(data);
           setSpinner(false);
           setShowProcess(true);
-          setRecommedData(data);
+          setEnrichddata(data);
         })
         .catch((error) =>{ alert("server error"); console.error(error)});
     };
@@ -147,9 +138,6 @@ const Recommend = (props: Props) => {
                   </HeaderCell>
                   <HeaderCell className="text-center">
                     Download Summarized Files
-                  </HeaderCell>
-                  <HeaderCell className="text-center">
-                    Download Enriched Files
                   </HeaderCell>
                 </HeaderRow>
               </Header>
@@ -169,7 +157,7 @@ const Recommend = (props: Props) => {
                     )}
 
                     {list.cmdb_file_url !== undefined ? (
-                      <Cell className="text-center">                       
+                      <Cell className="text-center">                        
                         <a
                           href={
                             "https://webapp-decom-demo.azurewebsites.net/download-file?url=" +
@@ -182,50 +170,27 @@ const Recommend = (props: Props) => {
                         </a>
                       </Cell>
                     ) : (
-                      <Cell className="text-center">
-                      
+                      <Cell className="text-center">                        
                         <a
                           href={
                             "https://webapp-decom-demo.azurewebsites.net/download-file?url=" +
                             list.url
                           }
                           title="download"
-                          target="_blank" rel="noopener noreferrer"
-                        >
+                          target="_blank" rel="noopener noreferrer">
                           <img src={downloadraw} width={24} alt="download" />
                         </a>
                       </Cell>
                     )}
                     {list.cmdb_file_url !== undefined ? (
-                      <Cell className="text-center">
+                      <Cell className="text-center">                        
                         <a
                           href={
                             "https://webapp-decom-demo.azurewebsites.net/download-file?url=" +
                             list.processed_cmdb_file_url
                           }
                           title="download"
-                          target="_blank" rel="noopener noreferrer"
-                        >
-                          <img
-                            src={downloadprocessed}
-                            width={24}
-                            alt="download"
-                          />
-                        </a>
-                      </Cell>
-                    ) : (
-                      <Cell className="text-center"></Cell>
-                    )}
-                    {list.cmdb_file_url !== undefined ? (
-                      <Cell className="text-center">
-                        <a
-                          href={
-                            "https://webapp-decom-demo.azurewebsites.net/download-file?url=" +
-                            list.apr_cmdb_file_url
-                          }
-                          title="download"
-                          target="_blank" rel="noopener noreferrer"
-                        >
+                          target="_blank" rel="noopener noreferrer" >
                           <img
                             src={downloadprocessed}
                             width={24}
@@ -248,29 +213,29 @@ const Recommend = (props: Props) => {
             Begin Enrich
           </Button> */}
 
-          {recommendstatus === "Completed" ?
+          {enrichedstatus === "Completed" ?
              <Button variant="primary" onClick={Summarization}>
-             <img src={summarize} width={25} alt="Show Recommended Result" className="btn-icon" />
-             Show Recommended Result
+             <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+             Show Enriched Result
            </Button>
-           : recommendstatus === "Processing" ?  <p className="orange">Processing 
+           : enrichedstatus === "Processing" ?  <p className="orange">Processing 
                   <span>
                       <span className="dot-one"> .</span>
                       <span className="dot-two"> .</span>
                       <span className="dot-three"> .</span>
                     </span>
                 </p>
-              : ((recommendstatus === "Not Yet Initiated" ||  recommendstatus === null)? 
+              : ((enrichedstatus === "Not Yet Initiated" ||  enrichedstatus === null)? 
               <Button variant="primary" onClick={Summarization}>
-                  <img src={summarize} width={25} alt="Begin Recommend" className="btn-icon" />
-                Begin Recommend
+                  <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+                Begin Enrich
                 </Button> : 
                 <div>
                   <p className="red">Server Error Please Upload Again
                 </p>
                 <Button variant="primary" className="" onClick={Summarization}>
-                  <img src={summarize} width={25} alt="Begin Recommend" className="btn-icon" />
-                Begin Recommend
+                  <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+                Begin Enrich
                 </Button> 
                   </div>
                 )
@@ -280,25 +245,58 @@ const Recommend = (props: Props) => {
       </>
     );
   }
-  console.log(recommeddata);
- // ChartJS.register(ArcElement, Tooltip, Legend);
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-  );
-  const labels = ['Retain', 'Retire', 'Remeadiate', 'Replace', 'Consolidate'];
-
-  const data = {
-    labels,
+  console.log(enrichdata);
+  ChartJS.register(ArcElement, Tooltip, Legend);
+  const BeforeEnrich = {
+    labels: [
+      "Data Available in CMDB = " + enrichdata.enrich_available_field_count,
+      "Data Not Available = " + enrichdata.enrich_missing_field_count,
+    ],
+    //const BeforeEnrich = {labels: ['No of Apps with supporting documents = ' + "300" , 'No of Apps without supporting documents = ' + "5"],
     datasets: [
       {
-        label: 'Applications total count: ' + (recommeddata.apr_retain_count + recommeddata.apr_retire_count + recommeddata.apr_remeadiate_count + recommeddata.apr_replace_count +  recommeddata.apr_consolidate_count),
-        data: [recommeddata.apr_retain_count, recommeddata.apr_retire_count, recommeddata.apr_remeadiate_count, recommeddata.apr_replace_count, recommeddata.apr_consolidate_count],
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        label: "",
+        data: [
+          enrichdata.enrich_available_field_count,
+          enrichdata.enrich_missing_field_count,
+        ],
+        //data: ["300", "5"],
+        backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 99, 132, 0.2)"],
+        borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 99, 132, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const AfterEnrich = {
+    labels: [
+      "Data Available in CMDB = " + enrichdata.enrich_available_field_count,
+      "Data not Available = " +
+        (enrichdata.enrich_missing_field_count -
+          enrichdata.enrich_enriched_field_count),
+      "Data Populated by GenAI = " + enrichdata.enrich_enriched_field_count,
+    ],
+    datasets: [
+      {
+        label: "",
+        data: [
+          enrichdata.enrich_available_field_count,
+          enrichdata.enrich_missing_field_count -
+            enrichdata.enrich_enriched_field_count,
+          enrichdata.enrich_enriched_field_count,
+        ],
+        //data: ["300", "25", "10"],
+        backgroundColor: [
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 99, 132, 0.2)",          
+          "rgba(255, 206, 86, 0.2)",
+        ],
+        borderColor: [
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 99, 132, 1)",          
+          "rgba(255, 206, 86, 1)",
+        ],
+        borderWidth: 1,
       },
     ],
   };
@@ -307,22 +305,19 @@ const Recommend = (props: Props) => {
     <div>
       <div className="container-block w90center d-flex align-items-start">
         <div className="container-block-bg white w-50 ">
-          <h2>Recommendation</h2>
+          <h2>Enrich</h2>
           <div className="desc">
-            <ul>
-              <li><span className='fw-bold'>Utilize CMDB Data:</span> This app will extract relevant information from the Configuration Management Database (CMDB), such as usage statistics, performance metrics, and dependencies.
-</li><li><span className='fw-bold'>Formulate Dispositions with Reasoning:</span> For each application, GenAI based app will decide a disposition and concise reasoning based on the data available in the CMDB.
-</li>
-            </ul>
+            Enrich your Configuration Management Database (CMDB) with the power
+            of Gen AI
           </div>
         </div>
         <div className="column-alignments">
           <div className="container-block-bg white w-100">
             <div>
               <div>
-                <h2>Enriched CMDB</h2>
+                <h2>Summarized CMDB</h2>
                 <div className="d-flex align-items-center">
-                  <label className="w-50">Select Enriched File</label>
+                  <label className="w-50">Select Summarized File</label>
                   <Dropdown
                     placeholder="Select Uploaded CMDB file"
                     fluid
@@ -361,19 +356,44 @@ const Recommend = (props: Props) => {
       {showprocess && (
         <div className="container-block w90center d-flex align-items-start mt-4">
           <div className="container-block-bg white w-100 ">
-            <h2>Disposition Status</h2>
+            <h2>Enriched Data</h2>
             <div className="text-center d-flex justify-content-center">
-              <div className="w-100 px-5 pb-5">                
-                <Bar data={data} />
-              </div>             
+              <div className="w-50 px-5 pb-5">
+                <h3>Before Enrich</h3>
+                <Doughnut
+                  data={BeforeEnrich}
+                  options={{
+                    plugins: {
+                      legend: {
+                        display: true,
+                        position: "bottom",
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <div className="w-50 px-5 pb-5">
+                <h3>After Enrich</h3>
+                <Doughnut
+                  data={AfterEnrich}
+                  options={{
+                    plugins: {
+                      legend: {
+                        display: true,
+                        position: "bottom",
+                      },
+                    },
+                  }}
+                />
+              </div>
             </div>
+            <div className="text-end pb-4 pe-3"><i>Note: This statistics solely based on the mandatory fields.</i></div>
             <div className="text-center">
-              <p className='text-start'>You will get additionally Architecture Recommendation, Functional Adequacy, Digital Readiness, Strategic/Business Fit, Technical Fit, Financial Fit along with Disposition and Reason.</p>
               <Button
                 variant="primary"
                 href={
                   "https://webapp-decom-demo.azurewebsites.net/download-file?url=" +
-                  recommeddata.apr_cmdb_file_url
+                  enrichdata.enriched_cmdb_file_url
                 }
               >
                 <img
@@ -382,7 +402,7 @@ const Recommend = (props: Props) => {
                   alt="upload"
                   className="btn-icon"
                 />
-                Download Recommended File
+                Download Enriched File
               </Button>
             </div>
           </div>
@@ -392,5 +412,4 @@ const Recommend = (props: Props) => {
   );
 };
 
-
-export default Recommend
+export default Enrich;

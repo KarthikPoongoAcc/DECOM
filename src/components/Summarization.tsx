@@ -18,15 +18,19 @@ import downloadraw from "../assets/images/icons/download-file.svg";
 import summarize from "../assets/images/additem.svg";
 
 import Upload from "./Upload";
-import BarChart from "./BarChart";
+// import BarChart from "./BarChart";
 
 import axios from "axios";
 import info from "../assets/images/icons/info.png";
 import uploadimg from "../assets/images/icons/upload-arrow-icon.svg";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
+import Tooltip1 from "react-bootstrap/Tooltip";
 import "./FileUpload.scss";
 import excel from "../assets/images/icons/doc.svg";
+import { useTree, CellTree } from '@table-library/react-table-library/tree';
+// import DonutChart from "./DonutChart";
+import { Chart as ChartJS, ArcElement,Tooltip, Legend } from 'chart.js'
+import { Doughnut } from 'react-chartjs-2';
 
 type Props = {};
 
@@ -43,11 +47,11 @@ const list = [
 const Summarization = (props: Props) => {
   // const CheckboxExampleSlider = () => <Checkbox slider />
   const [toggle, setTogglebtn] = useState(true);
-  const [fileName, setFilename] = useState("");
-  const [spinner, setSpinner] = useState(true);
+  const [spinner, setSpinner] = useState(false);
   const [showprocess, setShowProcess] = useState(false);
   const [selected1, setSelected1] = useState([]);
   const [selectedfile, setSelectedfile] = useState("");
+  const [selectedid, setSelectedID] = useState("");
   const [processfiles, setProcessfiles] = useState(false);
 
   const [showupload, setShowshowupload] = useState(true);
@@ -61,22 +65,28 @@ const Summarization = (props: Props) => {
   const [ofileList, setOFileList] = useState<FileList | null>(null);
 
   const [errormsg, setErrormsg] = useState("");
+  const [summarizeddata, setSummarizeddata] = useState<any | null>([]);
+  const [summarizedstatus, setSummarizedstatus] = useState<any | null>('');
 
   // 👇 files is not an array, but it's iterable, spread to get an array of files
   const files = fileList ? [...fileList] : [];
 
   const ofiles = ofileList ? [...ofileList] : [];
 
+  const [uploadlist, setUploadedList] = useState<any[]>([]);
+  const [seleteduploadlist, setSeltedUploadedList] = useState({ nodes: [] });
   const renderTooltip = (props: any) => (
-    <Tooltip id="button-tooltip" {...props}>
+   
+    <Tooltip1 id="button-tooltip" {...props}>
       CMDB filename starts with "CMDB_PROJECT_NAME.xlsx"
-    </Tooltip>
+    </Tooltip1>
   );
 
   const renderTooltip2 = (props: any) => (
-    <Tooltip id="button-tooltip" {...props}>
+    
+    <Tooltip1 id="button-tooltip" {...props}>
       Filename starts with "CMDB_PROJECT_NAME.xlsx"
-    </Tooltip>
+    </Tooltip1>
   );
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     // const selectedFile = e.target.files[0];
@@ -84,10 +94,19 @@ const Summarization = (props: Props) => {
     let filename = e.target.value.split("\\");
     let filen = filename[2].split("_");
     let fileext = filename[2].split(".");
+    let checksamename = true;
     console.log(filen[0]);
     setFileList(e.target.files);
-
-    if (e.target.files) {
+    uploadlist.forEach((file, i) => {
+      console.log(file.cmdb_file_name + " : " + filename[2]);
+      if(file.cmdb_file_name + ".xlsx" ===  filename[2]){
+        console.log("same");
+        checksamename = false;
+        setErrormsg("File name already available in the database.");
+        return;
+      }
+    });
+    if (e.target.files && checksamename) {
       console.log(fileext[1]);
       if (filen[0] === "CMDB") {
         if (
@@ -112,6 +131,7 @@ const Summarization = (props: Props) => {
     // const selectedFile = e.target.files[0];
 
     setShowmultipleupload(false);
+    console.log(e.target.accept.split(","));
     console.log(e.target.accept.split(","));
     setOFileList(e.target.files);
 
@@ -156,6 +176,7 @@ const Summarization = (props: Props) => {
         console.log(response);
         setSpinner(false);
         setShowstatus(false);
+        CMDBList();
       })
       .catch((error) => {
         // handle errors
@@ -274,81 +295,123 @@ const Summarization = (props: Props) => {
     );
   }
 
+  // useEffect(() => {
+  //   setSpinner(true);
+  //   fetch("https://webapp-decom-demo.azurewebsites.net/available-cmdbs", {
+  //     method: "get",
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setSelected1(
+  //         data.list_of_cmdbs.map((x: any, i: any) => {
+  //           return { key: i, text: x, value: x };
+  //         })
+  //       );
+  //       setSpinner(false);
+  //     });
+  // }, []);
+
   useEffect(() => {
     setSpinner(true);
-    fetch("https://webapp-decom-demo.azurewebsites.net/available-cmdbs", {
+    fetch("https://webapp-decom-demo.azurewebsites.net/download-cmdb", {
       method: "get",
     })
       .then((response) => response.json())
       .then((data) => {
+        setUploadedList(data);
+        console.log(data)
         setSelected1(
-          data.list_of_cmdbs.map((x: any, i: any) => {
-            return { key: i, text: x, value: x };
+          data.map((x: any, i: any) => {
+            return { key: i, text: x.cmdb_file_name, value: x.cmdb_file_name };
           })
         );
         setSpinner(false);
       });
-  }, []);
+    }, []);
 
+    const CMDBList = () =>{
+      setSpinner(true);
+    fetch("https://webapp-decom-demo.azurewebsites.net/download-cmdb", {
+      method: "get",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUploadedList(data);
+        console.log(data)
+        setSelected1(
+          data.map((x: any, i: any) => {
+            return { key: i, text: x.cmdb_file_name, value: x.cmdb_file_name };
+          })
+        );
+        setSpinner(false);
+      });
+    }
   // var fileDownload = require('js-file-download');
   const Summarization = () => {
-    const formData = new FormData();
-    formData.append("cmdb_folder", selectedfile);
+    // const formData = new FormData();
+    // formData.append("cmdb_folder", selectedfile);
     setSpinner(true);
-    fetch("https://webapp-decom-demo.azurewebsites.net/summarize", {
-      method: "post",
-      body: formData,
+    fetch("https://webapp-decom-demo.azurewebsites.net/summarize?id=" + selectedid, {
+      method: "get",
+    
     })
-      .then(function (resp) {
-        //const filename =  resp.headers.get('Content-Disposition').split('filename=')[1];
-        setSpinner(false);
-        console.log(resp);
+      .then(response => response.json())
+      .then(data => {console.log(data);
+        setSpinner(false);  
         setShowProcess(true);
-        return resp.blob();
+        setSummarizeddata(data);
       })
-      .then(function (blob) {
-        console.log(blob);
-        setSpinner(false);
-
-        //fileDownload(blob, "Processed_" + selectedfile + ".xlsx");
-      });
+      .catch(error => console.error(error));
   };
 
-  //var fileDownload = require('js-file-download');
-  const UploadSummarization = () => {
-    const f1 = files[0];
-    let fileext = f1.name.split(".");
-    const formData = new FormData();
-    formData.append("cmdb_folder", fileext[0]);
-    setSpinner(true);
-    fetch("https://webapp-decom-demo.azurewebsites.net/summarize", {
-      method: "post",
-      body: formData,
-    })
-      .then(function (resp) {
-        //const filename =  resp.headers.get('Content-Disposition').split('filename=')[1];
-        setSpinner(false);
-        console.log(resp);
-        setShowProcess(true);
-        return resp.blob();
-      })
-      .then(function (blob) {
-        console.log(blob);
-        setSpinner(false);
-        // fileDownload(blob, "Processed_" + f1.name);
-      });
-  };
-
+ 
   const Getfilename = (e: any) => {
+    if(e.target.textContent === ""){
+      return;
+    }
     setProcessfiles(true);
     setShowProcess(false);
+    console.log(uploadlist);
+    console.log(e.target.textContent);
+   // value = selectedfile;
+    //let dataselected = {nodes: []};
+    uploadlist.forEach((file, i) => {
+      
+      if(file.cmdb_file_name === e.target.textContent ){
+        console.log(file.cmdb_file_name)
+        setSeltedUploadedList(file);
+        setSelectedID(file.id);
+        setSummarizedstatus(file.summary_status);
+      }
+    });
+    
+    console.log(e.target.textContent)
     setSelectedfile(e.target.textContent);
+
   };
+
+  
   function Tablelist() {
-    const data = { nodes: list };
+    console.log(seleteduploadlist);
+    const tree = useTree(seleteduploadlist, {
+     
+      onChange: onTreeChange,
+    },
+    
+     {
+      treeIcon: {
+        size: "10px",
+      },
+    });
+    function onTreeChange(action:any, state:any) {
+      console.log(action, state);
+    }
+    const data = { nodes: [seleteduploadlist] };
+    console.log(data);
     return (
+      
       <>
-        <Table data={data}>
+        <Table data={data} tree={tree}  >
           {(tableList: any) => (
             <>
               <Header>
@@ -362,13 +425,122 @@ const Summarization = (props: Props) => {
               <Body>
                 {tableList.map((list: any) => (
                   <Row key={list.id} item={list}>
-                    <Cell>{selectedfile}</Cell>
+                    { list.cmdb_id !== undefined ? 
+                      <Cell >{list.file_name}</Cell > : 
+                     <>{list.supporting_files_count !== 0 ?
+                        <CellTree item={list}>{list.cmdb_file_name}</CellTree > :
+                        <Cell item={list}>{list.cmdb_file_name}</Cell >
+                      }</> 
+                     
+                    }
+                   
+                
+                    {list.cmdb_file_url !== undefined ? 
+                  <Cell className="text-center"> <a href={"https://webapp-decom-demo.azurewebsites.net/download-file?url=" + list.cmdb_file_url } title="download" target='_blank'><img src={downloadraw} width={24} alt="download"/></a></Cell>
+                  :
+                  <Cell className="text-center"> <a href={"https://webapp-decom-demo.azurewebsites.net/download-file?url=" + list.url } title="download" target='_blank'><img src={downloadraw} width={24} alt="download"/></a></Cell>
 
-                    <Cell className="text-center">
-                      <a href="">
-                        <img src={downloadraw} width={24} />
-                      </a>
-                    </Cell>
+                  }
+                  </Row>
+                ))}
+              </Body>
+            </>
+          )}
+        </Table>
+        <div>
+          {summarizedstatus === "Completed" ?
+             <Button variant="primary" onClick={Summarization}>
+             <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+             Show Summarization Result
+           </Button>
+           : summarizedstatus === "Processing" ?  <p className="orange">Processing 
+                  <span>
+                      <span className="dot-one"> .</span>
+                      <span className="dot-two"> .</span>
+                      <span className="dot-three"> .</span>
+                    </span>
+                </p>
+              : ((summarizedstatus === "Not Yet Initiated" ||  summarizedstatus === null)? 
+              <Button variant="primary" onClick={Summarization}>
+                  <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+                Begin Summarization
+                </Button> : 
+                <p className="red">Server Error Please Upload Again</p>)
+
+          }
+       
+          {/* <Button variant="primary" onClick={Summarization}>
+              <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+                Begin Summarization
+            </Button> */}
+          
+        </div>
+      </>
+    );
+  }
+
+  function TablelistUpload() {
+    //const data = { nodes: files };
+    
+    console.log(files[0].name);
+    uploadlist.forEach((file, i) => {
+      console.log(file.cmdb_file_name + " : " + files[0].name);
+      if(file.cmdb_file_name + ".xlsx" === files[0].name){
+        console.log(file.cmdb_file_name)
+        setSeltedUploadedList(file);
+        setSelectedID(file.id);
+      }
+    });
+    console.log(seleteduploadlist);
+    const tree = useTree(seleteduploadlist, {
+     
+      onChange: onTreeChange,
+    },
+    
+     {
+      treeIcon: {
+        size: "10px",
+      },
+    });
+    function onTreeChange(action:any, state:any) {
+      console.log(action, state);
+    }
+    const data = { nodes: [seleteduploadlist] };
+    console.log(data);
+    
+    return (
+      
+      <>
+        <Table data={data} tree={tree}  >
+          {(tableList: any) => (
+            <>
+              <Header>
+                <HeaderRow>
+                  <HeaderCell>CMDB Name</HeaderCell>
+                  <HeaderCell className="text-center">
+                    Download Raw Files
+                  </HeaderCell>
+                </HeaderRow>
+              </Header>
+              <Body>
+                {tableList.map((list: any) => (
+                  <Row key={list.id} item={list}>
+                    { list.cmdb_id !== undefined ? 
+                      <Cell >{list.file_name}</Cell > : 
+                     <>{list.supporting_files_count !== 0 ?
+                        <CellTree item={list}>{list.cmdb_file_name}</CellTree > :
+                        <Cell item={list}>{list.cmdb_file_name}</Cell >
+                      }</> 
+                     
+                    }
+                   
+                
+                    {list.cmdb_file_url !== undefined ? 
+                  <Cell className="text-center"> <a href={"https://webapp-decom-demo.azurewebsites.net/download-file?url=" + list.cmdb_file_url } title="download" target='_blank'><img src={downloadraw} width={24} alt="download"/></a></Cell>
+                  :
+                  <Cell className="text-center"> <a href={"https://webapp-decom-demo.azurewebsites.net/download-file?url=" + list.url } title="download" target='_blank'><img src={downloadraw} width={24} alt="download"/></a></Cell>
+
+                  }
                   </Row>
                 ))}
               </Body>
@@ -377,55 +549,15 @@ const Summarization = (props: Props) => {
         </Table>
         <div>
           <Button variant="primary" onClick={Summarization}>
-            <img src={summarize} width={25} alt="upload" className="btn-icon" />
-            Begin Summarization
-          </Button>
-        </div>
-      </>
-    );
-  }
-
-  function TablelistUpload() {
-    const data = { nodes: list };
-    return (
-      <>
-        <Table data={data}>
-          {(tableList: any) => (
-            <>
-              <Header>
-                <HeaderRow>
-                  <HeaderCell>CMDB Name</HeaderCell>
-                  <HeaderCell className="text-center">
-                    Download Raw Files
-                  </HeaderCell>
-                </HeaderRow>
-              </Header>
-              <Body>
-                {tableList.map((list: any) => (
-                  <Row key={list.id} item={list}>
-                    <Cell>{files[0].name}</Cell>
-
-                    <Cell className="text-center">
-                      <a href="">
-                        <img src={downloadraw} width={24} />
-                      </a>
-                    </Cell>
-                  </Row>
-                ))}
-              </Body>
-            </>
-          )}
-        </Table>
-        <div>
-          <Button variant="primary" onClick={UploadSummarization}>
-            <img src={summarize} width={25} alt="upload" className="btn-icon" />
-            Begin Summarization
+            <img src={summarize} width={25} alt="Begin Summarization" className="btn-icon" />
+              Begin Summarization
           </Button>
         </div>
       </>
     );
   }
   function ExistingList() {
+    console.log(selected1);
     return (
       <>
         <div className="position-relative">
@@ -437,9 +569,10 @@ const Summarization = (props: Props) => {
               fluid
               search
               selection
-              onChange={Getfilename}
+              onChange ={Getfilename}
               options={selected1}
               loading={spinner}
+              value={selectedfile}
             />
           </div>
           <div>{processfiles ? <Tablelist /> : ""}</div>
@@ -466,64 +599,38 @@ const Summarization = (props: Props) => {
     );
   }
 
-  var download = require("js-file-download");
-  const Downloadsummaryfile = () => {
-    const formData = new FormData();
-    formData.append("cmdb_folder", fileName);
-    setSpinner(true);
-    fetch("https://webapp-decom-demo.azurewebsites.net/download", {
-      method: "post",
-      body: formData,
-    })
-      .then(function (resp) {
-        // const filename =  resp.headers.get('Content-Disposition').split('filename=')[1];
-        setSpinner(false);
-        console.log(resp);
-        return resp.blob();
-      })
-      .then(function (blob) {
-        console.log(blob);
-        setSpinner(false);
-        return download(blob, "Processed_" + fileName + ".xlsx");
-      });
-  };
 
-  const DownloadUploadedsummaryfile = () => {
-    const f1 = files[0];
-    let fileext = f1.name.split(".");
-    const formData = new FormData();
-    formData.append("cmdb_folder", fileext[0]);
-    setSpinner(true);
-    fetch("https://webapp-decom-demo.azurewebsites.net/download", {
-      method: "post",
-      body: formData,
-    })
-      .then(function (resp) {
-        //const filename =  resp.headers.get('Content-Disposition').split('filename=')[1];
-        setSpinner(false);
-        console.log(resp);
-        setShowProcess(true);
-        return resp.blob();
-      })
-      .then(function (blob) {
-        console.log(blob);
-        setSpinner(false);
-        download(blob, "Processed_" + f1.name);
-      });
-  };
-
-  const donutData = [
-    { name: "No of Apps with Supporting Docs", value: 400 },
-    { name: "No of COTS Apps Summarized", value: 350 },
-    { name: "No of Custom Apps Summarized", value: 300 },
-  ];
+  ChartJS.register(ArcElement, Tooltip, Legend);
+  console.log(summarizeddata.apps_without_docs_count);
+ 
+  const donutData = {labels: ['No of Apps with supporting documents = ' + summarizeddata.apps_with_docs_count , 'No of Apps without supporting documents = ' + summarizeddata.apps_without_docs_count],
+  datasets: [
+    {
+      label: '',
+      data: [summarizeddata.apps_with_docs_count, summarizeddata.apps_without_docs_count],
+      backgroundColor: [
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 99, 132, 0.2)',        
+      ],
+      borderColor: [
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],};
 
   function Processfile() {
     return (
       <div className="position-relative">
         <div className="container-block w90center d-flex align-items-start my-4">
           <div className="container-block-bg white w-100">
-            <h4>{fileName} Summarized Data 1</h4>
+            <h4>{selectedfile} Summarized Data</h4>
+            <div className="text-center d-flex justify-content-center">
+              <div className="w-50 px-5 pb-5">
+                <Doughnut data={donutData}  /> 
+              </div>
+            </div>
             {/* <div className="text-center d-flex">
     <div className="w-100">
       <DonutChart data={donutData}  /> 
@@ -532,11 +639,11 @@ const Summarization = (props: Props) => {
       <DonutChart data={donutData}  /> 
     </div>
   </div> */}
-            <div className="text-center d-flex justify-content-center">
+            {/* <div className="text-center d-flex justify-content-center">
               <BarChart data={donutData} />
-            </div>
+            </div> */}
             <div className="text-center">
-              <Button variant="primary" onClick={Downloadsummaryfile}>
+              <Button variant="primary" href={"https://webapp-decom-demo.azurewebsites.net/download-file?url=" + summarizeddata.processed_cmdb_file_url} >
                 <img
                   src={downloadimg}
                   width={25}
@@ -574,7 +681,12 @@ const Summarization = (props: Props) => {
       <div className="position-relative">
         <div className="container-block w90center d-flex align-items-start my-4">
           <div className="container-block-bg white w-100">
-            <h4> Summarized Data</h4>
+            <h4>{selectedfile} Summarized Data</h4>
+            <div className="text-center d-flex justify-content-center">
+              <div className="w-50 px-5 pb-5">
+                <Doughnut data={donutData}  /> 
+              </div>
+            </div>
             {/* <div className="text-center d-flex">
     <div className="w-100">
       <DonutChart data={donutData}  /> 
@@ -583,11 +695,11 @@ const Summarization = (props: Props) => {
       <DonutChart data={donutData}  /> 
     </div>
   </div> */}
-            <div className="text-center d-flex justify-content-center">
+            {/* <div className="text-center d-flex justify-content-center">
               <BarChart data={donutData} />
-            </div>
+            </div> */}
             <div className="text-center">
-              <Button variant="primary" onClick={DownloadUploadedsummaryfile}>
+              <Button variant="primary" href={"https://webapp-decom-demo.azurewebsites.net/download-file?url=" + summarizeddata.processed_cmdb_file_url} >
                 <img
                   src={downloadimg}
                   width={25}
@@ -597,7 +709,9 @@ const Summarization = (props: Props) => {
                 Download Summarized File
               </Button>
             </div>
-            {spinner && (
+          </div>
+        </div>
+        {spinner && (
             <div className="spinner spinner-full">
               <div className="lds-spinner">
                 <div></div>
@@ -615,10 +729,6 @@ const Summarization = (props: Props) => {
               </div>
             </div>
           )}
-          </div>
-         
-        </div>
-        
       </div>
     );
   }
@@ -678,9 +788,9 @@ const Summarization = (props: Props) => {
         </div>
         <div className="column-alignments">
           <div className="checkfield">
-            Upload New CMDB
+            Upload File
             <Checkbox slider onChange={toggleChange} />
-            Existing CMDB{" "}
+            Existing File
           </div>
           <div className="container-block-bg white w-100">
             <div>{toggle ? <Uploaddata /> : <ExistingList />}</div>

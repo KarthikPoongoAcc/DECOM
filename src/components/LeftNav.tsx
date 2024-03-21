@@ -16,6 +16,7 @@ type Props = {
 
 const LeftNav = (props: Props) => {
   const [showLogin, setShowLogin] = useState(false);
+
   return (
 
     <div className='d-flex left'>
@@ -26,28 +27,28 @@ const LeftNav = (props: Props) => {
         Portfolio Rationalization Assistant
           </div>
      </div>
-      <Nav fill variant="tabs" defaultActiveKey="/" className='scale-up-ver-center' >
+      <Nav fill variant="tabs" className='scale-up-ver-center' defaultActiveKey={window.location.pathname}>
         <Nav.Item>
-        <Nav.Link eventKey="/" as={Link} to="/" ><img src={dashboard} width={30} alt="dashboard" />Dashboard</Nav.Link>
+        <Nav.Link eventKey="/" as={Link} to="/"><img src={dashboard} width={30} alt="Status" />Status</Nav.Link>
       </Nav.Item>
       <Nav.Item  >
-        <Nav.Link eventKey="/summarization" as={Link} to="/summarization" ><img src={summarize} width={30} alt="dashboard" />Summarization</Nav.Link>
+        <Nav.Link eventKey="/summarization" as={Link} to="/summarization"><img src={summarize} width={30} alt="Summarize" />Summarize</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="/enhance" as={Link} to="/enhance" ><img src={enrich} width={30} alt="dashboard" />Enrich</Nav.Link>
+        <Nav.Link eventKey="/enrich" as={Link} to="/enrich"><img src={enrich} width={30} alt="Enrich" />Enrich</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="/recommend" as={Link} to="/recommend"><img src={recom} width={30} alt="dashboard" />Recommend</Nav.Link>
+        <Nav.Link eventKey="/recommend" as={Link} to="/recommend"><img src={recom} width={30} alt="Recommend" />Recommend</Nav.Link>
       </Nav.Item>
-      {/* <Nav.Item>
-        <Nav.Link as={Link} to={{ pathname: "https://www.google.co.in/" }} target="_blank"  >
-        <img src={genrate} width={30} alt="dashboard" />Document Generation 
+      <Nav.Item>
+        <Nav.Link eventKey="/docgeneration" as={Link} to="/docgeneration" >
+        <img src={genrate} width={30} alt="docgeneration" />Document Generation 
         </Nav.Link>
-      </Nav.Item> */}
+      </Nav.Item>
       
-          <a href={"https://ttid-demo.accenture.com/decom/"} target='_blank' className="nav-link" rel='noreferrer'>
-            <img src={genrate} width={30} alt="dashboard" />Document Generation 
-          </a>
+          {/* <a href={"https://ttid-demo.accenture.com/decom/"} target='_blank' className="nav-link" rel='noreferrer'>
+            <img src={genrate} width={30} alt="Document Generation " />Document Generation 
+          </a> */}
 
      
     </Nav>
@@ -56,7 +57,7 @@ const LeftNav = (props: Props) => {
     {/* <div className='border-top'>
       <Nav fill variant="tabs" className='scale-up-ver-center' >
         <Nav.Item>
-        <Nav.Link onClick={() => setShowLogin(true)}><img src={settings} width={30} alt="dashboard" />File Management</Nav.Link>
+        <Nav.Link onClick={() => setShowLogin(true)}><img src={settings} width={30} alt="Status" />File Management</Nav.Link>
       </Nav.Item>
       </Nav>      
       <FileUpload show={showLogin} close={() => setShowLogin(false)} />

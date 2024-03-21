@@ -40,7 +40,7 @@
 main{
   height: 100vh
 }
-canvas{
+canvas.particles-bg-canvas-self{
      width: 100%;
     height: 100%;
     position: absolute;
@@ -110,13 +110,13 @@ H1{
   display: flex;
   justify-content: center;
   margin-bottom: 1.5rem;
-  &.w90center{
-    width: 90%;
-    margin: 0 auto;
-    column-gap: 1.5rem;
-  }
+  
 }
-
+.w90center{
+  width: 90%;
+  margin: 0 auto;
+  column-gap: 1.5rem;
+}
 .column-alignments{
   flex-direction: column;
   justify-content: flex-start;
@@ -159,7 +159,8 @@ p.error {
   text-align: right;
 }
 
-button.btn.btn-primary {
+button.btn.btn-primary,  a.btn.btn-primary{
+  
   background-color: #6c03a9;
   border: none;
   padding: 0.75rem 2rem;
@@ -169,7 +170,7 @@ button.btn.btn-primary {
   }
 }
 
-button.btn.btn-secondary {
+button.btn.btn-secondary, a.btn.btn-secondary {
   background-color: #666;
   border: none;
   padding: 0.75rem 2rem;
@@ -215,12 +216,37 @@ button.btn.btn-secondary {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.orange{
+.orange, .orange *{
   color: #C34900;
 }
-.red{
+.red, .red *{
   color: red;
 }
-.green{
+.green, .green * {
   color: green;
+}
+
+.ui.menu a.item:hover, .ui.menu a.item:active{
+  background-color: #8a0cd3;
+  color: #fff;
+}
+.ui.menu a.active.item, .ui.pointing.menu a.active.item:after, .ui.menu a.active.item:hover, .ui.pointing.menu a.active.item:hover:after{
+  background-color: #6c03a9;
+  color: #fff;
+  
+}
+.ui.menu a.item{
+  font-family: "Catamaran-regular", "Helvetica Neue", sans-serif;
+}
+
+.ui.tab {
+  border-radius: 1rem;
+  text-align: left;
+}
+
+.ui.menu{
+  border-radius: 1rem;
+  > .item:first-child{
+    border-radius: 1rem 0 0 1rem;
+  }
 }

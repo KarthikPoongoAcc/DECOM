@@ -30,8 +30,8 @@ class DonutChart extends Component {
         // Create SVG
         const svg  = d3.select(this.chRef.current)
         .append('svg')
-        .attr("width", '75%')
-        .attr("height", '75%')
+        .attr("width", '50%')
+        .attr("height", '50%')
             .attr('viewBox', '0 0 ' + width + ' ' + width )
         //.attr('preserveAspectRatio','xMinYMin')
         .append("g")
